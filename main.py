@@ -22,5 +22,13 @@ items = {
 }
 
 @app.get("/")
-def index() -> Dict[str, Dict[int, Item]]:
-    return {"items": items}
+def read_root():
+    return {"message": "Welcome to the FastAPI application!"}
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int):
+    return {"item_id": item_id, "description": "This is an item"}
+
+@app.get("/hello")
+def say_hello():
+    return {"message": "Hello, World!"}
