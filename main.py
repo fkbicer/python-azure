@@ -1,6 +1,6 @@
 from enum import Enum
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from azure_blob import get_blob_service_client
 
@@ -42,3 +42,20 @@ async def read_root():
     containers = blob_service_client.list_containers()
     container_names = [container['name'] for container in containers]
     return {"containers": container_names}
+
+
+@app.post("/upload-video/")
+async def upload_video(file: UploadFile = File(...)):
+    # Blob container'ı seçin veya oluşturun
+    container_name = "videos"
+    container_client = blob_service_client.get_container_client(container_name)
+
+    # Eğer container mevcut değilse oluşturun
+    if not container_client.exists():
+        container_client.create_container()
+
+    # Dosyayı blob olarak yükleyin
+    blob_client = container_client.get_blob_client(file.filename)
+    blob_client.upload_blob(file.file, blob_type="BlockBlob")
+
+    return {"filename": file.filename, "status": "uploaded"}
