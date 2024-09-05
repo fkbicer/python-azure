@@ -5,8 +5,6 @@ from pydantic import BaseModel
 from azure_blob import get_blob_service_client
 
 app = FastAPI()
-
-
 class Category(Enum):
     TOOLS = "tools"
     CONSUMABLES = "consumables"
